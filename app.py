@@ -101,13 +101,13 @@ if uploaded_file is not None:
     enhanced_img = clahe.apply(img)
     edges = cv2.Canny(enhanced_img, 100, 200)
     
-    col1, col2, col3 = st.columns(3)
+  col1, col2, col3 = st.columns(3)
     with col1:
-        st.image(img, caption="Original X-Ray", use_column_width=True)
+        st.image(img, caption="Original X-Ray", width="stretch")
     with col2:
-        st.image(enhanced_img, caption="Contrast Enhanced", use_column_width=True)
+        st.image(enhanced_img, caption="Contrast Enhanced", width="stretch")
     with col3:
-        st.image(edges, caption="Hardware Edges", use_column_width=True)
+        st.image(edges, caption="Hardware Edges", width="stretch")
 
 # 1. Upload your X-ray image (if you haven't already)
 print("Please upload your knee arthroplasty X-ray:")
