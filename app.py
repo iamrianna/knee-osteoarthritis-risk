@@ -86,3 +86,64 @@ if uploaded_file is not None:
         
     with col3:
         st.image(edges, caption="Hardware Edges", width="stretch")
+
+col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.image(img, caption="Original X-Ray", width="stretch")
+        
+    with col2:
+        st.image(enhanced_img, caption="Contrast Enhanced", width="stretch")
+        
+    with col3:
+        st.image(edges, caption="Hardware Edges", width="stretch")
+
+    # --- NEW: QUANTITATIVE METrics EXTRACTION ---
+    st.markdown("### 📊 Quantitative X-Ray Metrics")
+    
+    # 1. Estimate Tibial Component Angle using Hough Lines
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=80, minLineLength=40, maxLineGap=10)
+    estimated_angle = 0.0
+    
+    if lines is not None:
+        tray_angles = []
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            if x2 - x1 != 0:
+                deg = np.degrees(np.arctan2(y2 - y1, x2 - x1))
+                # Filter for relatively horizontal lines (typical of tibial trays)
+                if abs(deg) < 25:
+                    tray_angles.append(deg)
+        if tray_angles:
+            estimated_angle = float(np.mean(tray_angles))
+
+    # 2. Calculate Edge Density (proxy for interface complexity/wear)
+    edge_pixel_count = np.sum(edges > 0)
+    total_pixels = edges.shape[0] * edges.shape[1]
+    edge_density = (edge_pixel_count / total_pixels) * 100
+
+    # Display Metrics in Clean Columns
+    metric_col1, metric_col2, metric_col3 = st.columns(3)
+    
+    with metric_col1:
+        st.metric(
+            label="Est. Tibial Tray Angle", 
+            value=f"{estimated_angle:.1f}°", 
+            delta="Target: 0.0° (Neutral)",
+            delta_value="inverse"
+        )
+        
+    with metric_col2:
+        st.metric(
+            label="Hardware Edge Density", 
+            value=f"{edge_density:.2f}%",
+            help="Percentage of edge pixels detected along the implant-bone interface."
+        )
+        
+    with metric_col3:
+        # Risk heuristic based on edge complexity
+        interface_status = "Normal Fixation" if edge_density < 3.5 else "Potential Radiolucency / Wear"
+        st.metric(
+            label="Interface Assessment", 
+            value=interface_status
+        )
