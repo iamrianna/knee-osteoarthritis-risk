@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-st.title("Knee Osteoarthritis Risk & Arthroplasty Analyzer")
-st.write("A web prototype for clinical risk prediction and X-ray hardware/bone analysis. by Rianna Tanase")
+st.title("🏥 Knee Osteoarthritis Risk & Arthroplasty Analyzer")
+st.write("A web prototype for clinical risk prediction and X-ray hardware/bone analysis.")
 
 # --- SIDEBAR OR SECTION FOR CLINICAL DATA ---
 st.header("1. Patient Clinical Risk Assessment")
@@ -17,7 +17,7 @@ np.random.seed(42)
 n_samples = 1000
 
 data = pd.DataFrame({
-    'Age': np.random.randint(20, 85, size=n_samples),
+    'Age': np.random.randint(40, 85, size=n_samples),
     'BMI': np.random.uniform(18.5, 40.0, size=n_samples),
     'Gender': np.random.choice([0, 1], size=n_samples),
     'Previous_Injury': np.random.choice([0, 1], size=n_samples, p=[0.7, 0.3]),
@@ -87,18 +87,7 @@ if uploaded_file is not None:
     with col3:
         st.image(edges, caption="Hardware Edges", width="stretch")
 
-col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.image(img, caption="Original X-Ray", width="stretch")
-        
-    with col2:
-        st.image(enhanced_img, caption="Contrast Enhanced", width="stretch")
-        
-    with col3:
-        st.image(edges, caption="Hardware Edges", width="stretch")
-
-    # --- NEW: QUANTITATIVE METrics EXTRACTION ---
+    # --- QUANTITATIVE METRICS EXTRACTION ---
     st.markdown("### 📊 Quantitative X-Ray Metrics")
     
     # 1. Estimate Tibial Component Angle using Hough Lines
@@ -111,13 +100,12 @@ col1, col2, col3 = st.columns(3)
             x1, y1, x2, y2 = line[0]
             if x2 - x1 != 0:
                 deg = np.degrees(np.arctan2(y2 - y1, x2 - x1))
-                # Filter for relatively horizontal lines (typical of tibial trays)
                 if abs(deg) < 25:
                     tray_angles.append(deg)
         if tray_angles:
             estimated_angle = float(np.mean(tray_angles))
 
-    # 2. Calculate Edge Density (proxy for interface complexity/wear)
+    # 2. Calculate Edge Density
     edge_pixel_count = np.sum(edges > 0)
     total_pixels = edges.shape[0] * edges.shape[1]
     edge_density = (edge_pixel_count / total_pixels) * 100
@@ -129,8 +117,7 @@ col1, col2, col3 = st.columns(3)
         st.metric(
             label="Est. Tibial Tray Angle", 
             value=f"{estimated_angle:.1f}°", 
-            delta="Target: 0.0° (Neutral)",
-            delta_value="inverse"
+            delta="Target: 0.0° (Neutral)"
         )
         
     with metric_col2:
@@ -141,7 +128,6 @@ col1, col2, col3 = st.columns(3)
         )
         
     with metric_col3:
-        # Risk heuristic based on edge complexity
         interface_status = "Normal Fixation" if edge_density < 3.5 else "Potential Radiolucency / Wear"
         st.metric(
             label="Interface Assessment", 
