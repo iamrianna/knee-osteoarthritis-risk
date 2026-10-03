@@ -17,7 +17,7 @@ np.random.seed(42)
 n_samples = 1000
 
 data = pd.DataFrame({
-    'Age': np.random.randint(40, 85, size=n_samples),
+    'Age': np.random.randint(20, 85, size=n_samples),
     'BMI': np.random.uniform(18.5, 40.0, size=n_samples),
     'Gender': np.random.choice([0, 1], size=n_samples),
     'Previous_Injury': np.random.choice([0, 1], size=n_samples, p=[0.7, 0.3]),
