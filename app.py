@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
-st.title("🏥 Knee Osteoarthritis Risk & Arthroplasty Analyzer")
-st.write("A web prototype for clinical risk prediction and X-ray hardware/bone analysis.")
+st.title("Knee Osteoarthritis Risk & Arthroplasty Analyzer")
+st.write("A web prototype for clinical risk prediction and X-ray hardware/bone analysis. by Rianna Tanase")
 
 # --- SIDEBAR OR SECTION FOR CLINICAL DATA ---
 st.header("1. Patient Clinical Risk Assessment")
