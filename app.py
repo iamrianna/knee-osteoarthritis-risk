@@ -87,7 +87,7 @@ if uploaded_file is not None:
     with col3:
         st.image(edges, caption="Hardware Edges", width="stretch")
 
-    # --- QUANTITATIVE METRICS EXTRACTION ---
+   # --- QUANTITATIVE METRICS EXTRACTION ---
     st.markdown("### 📊 Quantitative X-Ray Metrics")
     
     # 1. Estimate Tibial Component Angle using Hough Lines
@@ -97,11 +97,13 @@ if uploaded_file is not None:
     if lines is not None:
         tray_angles = []
         for line in lines:
-            x1, y1, x2, y2 = line[0]
-            if x2 - x1 != 0:
-                deg = np.degrees(np.arctan2(y2 - y1, x2 - x1))
-                if abs(deg) < 25:
-                    tray_angles.append(deg)
+            coords = line[0] if len(line.shape) > 1 else line
+            if len(coords) == 4:
+                x1, y1, x2, y2 = coords
+                if x2 - x1 != 0:
+                    deg = np.degrees(np.arctan2(y2 - y1, x2 - x1))
+                    if abs(deg) < 25:
+                        tray_angles.append(deg)
         if tray_angles:
             estimated_angle = float(np.mean(tray_angles))
 
