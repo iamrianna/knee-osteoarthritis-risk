@@ -89,7 +89,25 @@ plt.show()
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from google.colab import files
+# Use this instead of google.colab
+uploaded_file = st.file_uploader("Upload Knee X-Ray Image (.jpg, .png)", type=["jpg", "jpeg", "png"])
+
+if uploaded_file is not None:
+    file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+    img = cv2.imdecode(file_bytes, cv2.IMREAD_GRAYSCALE)
+    
+    # CLAHE processing
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(8, 8))
+    enhanced_img = clahe.apply(img)
+    edges = cv2.Canny(enhanced_img, 100, 200)
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.image(img, caption="Original X-Ray", use_column_width=True)
+    with col2:
+        st.image(enhanced_img, caption="Contrast Enhanced", use_column_width=True)
+    with col3:
+        st.image(edges, caption="Hardware Edges", use_column_width=True)
 
 # 1. Upload your X-ray image (if you haven't already)
 print("Please upload your knee arthroplasty X-ray:")
